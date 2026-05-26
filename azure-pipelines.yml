@@ -1,0 +1,29 @@
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  imageName: 'sravani464/employeeapi'
+  tag: 'latest'
+
+steps:
+
+- task: Docker@2
+  displayName: Build Docker Image
+  inputs:
+    command: build
+    repository: $(imageName)
+    dockerfile: '**/Dockerfile'
+    tags: |
+      $(tag)
+
+- task: Docker@2
+  displayName: Push Docker Image
+  inputs:
+    command: push
+    repository: $(imageName)
+    containerRegistry: 'dockerhub-connection'
+    tags: |
+      $(tag)
