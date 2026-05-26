@@ -27,3 +27,18 @@ steps:
     containerRegistry: 'dockerhub-connection'
     tags: |
       $(tag)
+
+- task: SSH@0
+  displayName: Deploy to AWS EC2
+  inputs:
+    sshEndpoint: 'aws-ec2-ssh'
+    runOptions: inline
+    inline: |
+      sudo docker pull $(imageName):$(tag)
+
+      sudo docker stop employee-container || true
+      sudo docker rm employee-container || true
+
+      sudo docker run -d -p 8080:8080 \
+      --name employee-container \
+      $(imageName):$(tag)
